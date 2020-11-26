@@ -17,21 +17,22 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
-# Include CPLEX.
-set(LPS cpx CACHE STRING "options for LP solver")
-find_path(CPLEX_INCLUDE_DIR
-        NAMES cplex.h
-        HINTS "${CPLEX_DIR}/include/ilcplex" "$ENV{CPLEX_DIR}/include/ilcplex")
-find_library(CPLEX_LIBRARY
-        NAMES cplex
-        HINTS "${CPLEX_DIR}/lib/*/static_pic" "$ENV{CPLEX_DIR}/lib/*/static_pic")
-if (NOT CPLEX_INCLUDE_DIR)
-    message(FATAL_ERROR "CPLEX includes not found")
+# Include Gurobi.
+set(LPS grb CACHE STRING "options for LP solver")
+find_path(GUROBI_INCLUDE_DIR
+        NAMES gurobi_c.h
+        HINTS "${GUROBI_HOME}/include" "$ENV{GUROBI_HOME}/include" "${GUROBI_HOME}/mac64/include" "$ENV{GUROBI_HOME}/mac64/include" "${GUROBI_HOME}/linux64/include" "$ENV{GUROBI_HOME}/linux64/include")
+find_library(GUROBI_LIBRARY
+        NAMES gurobi gurobi70 gurobi75 gurobi81 gurobi90
+        HINTS "${GUROBI_HOME}/lib" "$ENV{GUROBI_HOME}/lib" "${GUROBI_HOME}/mac64/lib" "$ENV{GUROBI_HOME}/mac64/lib" "${GUROBI_HOME}/linux64/lib" "$ENV{GUROBI_HOME}/linux64/lib")
+if (NOT GUROBI_INCLUDE_DIR)
+    message(FATAL_ERROR "GUROBI includes not found")
+set(GUROBI_INCLUDE_DIRS GUROBI_INCLUDE_DIR)  # For scipsuite
 endif ()
-if (NOT CPLEX_LIBRARY)
-    message(FATAL_ERROR "CPLEX library not found")
+if (NOT GUROBI_LIBRARY)
+    message(FATAL_ERROR "GUROBI library not found")
 endif ()
-include_directories(${CPLEX_INCLUDE_DIR})
+include_directories(${GUROBI_INCLUDE_DIR})
 
 # Set stuff for SCIP 6.0.2.
 set(WITH_SCIPDEF on)
